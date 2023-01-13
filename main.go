@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -10,13 +12,32 @@ import (
 )
 
 func main() {
+	var (
+		withDate = flag.Bool("w", false, "Display with date")
+		separator = flag.String("s", "-", "Specify date separator")
+		repNonDigit = regexp.MustCompile(`[^\d]`)
+		repOtherSep = regexp.MustCompile(`[/\.]`)
+	)
+
+	flag.Parse()
+
+	if len(*separator) > 1 {
+		fmt.Println("Separator is one character.")
+		os.Exit(1)
+	}
+
 	date := time.Now()
 
-	if len(os.Args) > 1 {
-		datestring := os.Args[1]
-		datestring = strings.ReplaceAll(datestring, "/", "-")
-		datestring = strings.ReplaceAll(datestring, ".", "-")
-		
+	if flag.NArg() > 0 {
+		datestring := flag.Args()[0]
+
+		sep := repNonDigit.FindString(datestring)
+		if len(sep) > 0 {
+			*separator = sep
+		}
+
+		datestring = repOtherSep.ReplaceAllString(datestring, "-")
+
 		d, err := time.Parse("2006-1-2", datestring)
 		if err == nil {
 			date = d
@@ -40,5 +61,10 @@ func main() {
 		}
 	}
 
-	fmt.Println(monday.Format(date, "Mon", locale))
+	if !*withDate {
+		fmt.Println(monday.Format(date, "Mon", locale))
+	} else {
+		dateFormat := fmt.Sprintf("2006%s1%s2(Mon)", *separator, *separator)
+		fmt.Println(monday.Format(date, dateFormat, locale))
+	}
 }

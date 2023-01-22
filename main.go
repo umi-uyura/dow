@@ -7,16 +7,13 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/goodsign/monday"
 )
 
 func main() {
 	var (
 		withDate = flag.Bool("w", false, "Display with date")
 		separator = flag.String("s", "-", "Specify date separator")
-		repNonDigit = regexp.MustCompile(`[^\d]`)
-		repOtherSep = regexp.MustCompile(`[/\.]`)
+		regexOtherSep = regexp.MustCompile(`[/\.]`)
 	)
 
 	flag.Parse()
@@ -29,14 +26,8 @@ func main() {
 	date := time.Now()
 
 	if flag.NArg() > 0 {
-		datestring := flag.Args()[0]
-
-		sep := repNonDigit.FindString(datestring)
-		if len(sep) > 0 {
-			*separator = sep
-		}
-
-		datestring = repOtherSep.ReplaceAllString(datestring, "-")
+		dateparam := flag.Args()[0]
+		datestring := regexOtherSep.ReplaceAllString(dateparam, "-")
 
 		d, err := time.Parse("2006-1-2", datestring)
 		if err == nil {
@@ -48,23 +39,15 @@ func main() {
 		}
 	}
 
-	var locale monday.Locale = monday.LocaleEnUS
 	lang := os.Getenv("LANG")
 
-	if len(lang) > 0 {
-		lang1 := strings.Split(lang, ".")
-		for _, l := range monday.ListLocales() {
-			if lang1[0] == string(l) {
-				locale = l
-				break
-			}
-		}
-	}
-
 	if !*withDate {
-		fmt.Println(monday.Format(date, "Mon", locale))
+		fmt.Println(GetLocaleName(date, lang))
 	} else {
-		dateFormat := fmt.Sprintf("2006%s1%s2(Mon)", *separator, *separator)
-		fmt.Println(monday.Format(date, dateFormat, locale))
+		dayofweek := GetLocaleNameWithDate(date, lang)
+		if *separator != "-" {
+			dayofweek = strings.Replace(dayofweek, "-", *separator, -1)
+		}
+		fmt.Println(dayofweek)
 	}
 }

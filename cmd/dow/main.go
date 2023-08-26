@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/umi-uyura/dow"
 )
 
 func main() {
@@ -42,9 +44,9 @@ func main() {
 	lang := os.Getenv("LANG")
 
 	if !*withDate {
-		fmt.Println(GetLocaleName(date, lang))
+		fmt.Println(dow.GetLocaleName(date, lang))
 	} else {
-		dayofweek := GetLocaleNameWithDate(date, lang)
+		dayofweek := dow.GetLocaleNameWithDate(date, lang)
 		if *separator != "-" {
 			dayofweek = strings.Replace(dayofweek, "-", *separator, -1)
 		}

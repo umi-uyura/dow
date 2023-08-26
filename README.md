@@ -8,7 +8,7 @@ Install
 -------
 
 ```
-go install github.com/umi-uyura/dow@latest
+go install github.com/umi-uyura/dow/cmd/dow@latest
 ```
 
 

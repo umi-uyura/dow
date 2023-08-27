@@ -16,8 +16,8 @@ func GetLocaleName(date time.Time, lang string) string {
 	return format(date, locale, false)
 }
 
-func GetNameWithDate(date time.Time, lang string) string {
-	var locale = getLocale(lang)
+func GetNameWithDate(date time.Time) string {
+	var locale = getLocale("")
 	return format(date, locale, true)
 }
 

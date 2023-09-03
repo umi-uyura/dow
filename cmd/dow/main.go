@@ -11,5 +11,6 @@ func main() {
 		Stdin:  os.Stdin,
 	}
 
-	cli.Run()
+	exitcode := cli.Run(os.Args)
+	os.Exit(exitcode)
 }

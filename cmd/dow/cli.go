@@ -12,30 +12,44 @@ import (
 	"github.com/umi-uyura/dow"
 )
 
+const (
+	EXITCODE_OK = iota
+	EXITCODE_NG
+)
+
 type CLI struct {
 	Stdout io.Writer
 	Stderr io.Writer
 	Stdin  io.Reader
 }
 
-func (cli *CLI) Run() {
+func (cli *CLI) Run(args []string) int {
 	var (
-		withDate = flag.Bool("w", false, "Display with date")
-		separator = flag.String("s", "-", "Specify date separator")
 		regexOtherSep = regexp.MustCompile(`[/\.]`)
+		withDate bool
+		separator string
 	)
 
-	flag.Parse()
+	command := flag.NewFlagSet("dow", flag.ExitOnError)
+	command.SetOutput(cli.Stdout)
+	command.BoolVar(&withDate, "w", false, "Display with date")
+	command.StringVar(&separator, "s", "-", "Specify date separator")
 
-	if len(*separator) > 1 {
+	err := command.Parse(args[1:])
+	if err != nil {
+		fmt.Fprintf(cli.Stdout, "ERROR: %v", err)
+		return EXITCODE_NG
+	}
+
+	if len(separator) > 1 || len(separator) == 0 {
 		fmt.Fprintln(cli.Stdout, "Separator is one character.")
-		os.Exit(1)
+		return EXITCODE_NG
 	}
 
 	date := time.Now()
 
-	if flag.NArg() > 0 {
-		dateparam := flag.Args()[0]
+	if command.NArg() > 0 {
+		dateparam := command.Args()[0]
 		datestring := regexOtherSep.ReplaceAllString(dateparam, "-")
 
 		d, err := time.Parse("2006-1-2", datestring)
@@ -44,19 +58,21 @@ func (cli *CLI) Run() {
 		} else {
 			fmt.Fprintln(cli.Stdout, "Invalid date format.")
 			fmt.Fprintln(cli.Stdout, "Valid date formats: 'yyyy-mm-dd', 'yyyy/mm/dd', 'yyyy.mm.dd'.")
-			os.Exit(1)
+			return EXITCODE_NG
 		}
 	}
 
 	lang := os.Getenv("LANG")
 
-	if !*withDate {
-		fmt.Fprintln(cli.Stdout, dow.GetLocaleName(date, lang))
+	if !withDate {
+		fmt.Fprint(cli.Stdout, dow.GetLocaleName(date, lang))
 	} else {
 		dayofweek := dow.GetLocaleNameWithDate(date, lang)
-		if *separator != "-" {
-			dayofweek = strings.Replace(dayofweek, "-", *separator, -1)
+		if separator != "-" {
+			dayofweek = strings.Replace(dayofweek, "-", separator, -1)
 		}
-		fmt.Fprintln(cli.Stdout, dayofweek)
+		fmt.Fprint(cli.Stdout, dayofweek)
 	}
+
+	return EXITCODE_OK
 }

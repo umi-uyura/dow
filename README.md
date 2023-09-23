@@ -51,3 +51,9 @@ $ LANG=ja_JP dow 2023/1/4
 $ LANG=zh_CN dow 2023.1.5
 四
 ```
+
+
+License
+-------
+
+MIT License

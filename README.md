@@ -7,7 +7,7 @@ Display day of week for specified date.
 Install
 -------
 
-```
+```shell
 go install github.com/umi-uyura/dow/cmd/dow@latest
 ```
 
@@ -15,30 +15,39 @@ go install github.com/umi-uyura/dow/cmd/dow@latest
 Usage
 -----
 
+### CLI Tool
+
+```shell
+dow [options] [date]
 ```
-dow [date]
-```
 
-Support date format
+* Support date format
+  - `yyyy-mm-dd`
+  - `yyyy/mm/dd`
+  - `yyyy.mm.dd`
+* When execute without arguments, display current day of week.
+* Display day of week in language of locale, set `LANG` environment variable.
 
-- `yyyy-mm-dd`
-- `yyyy/mm/dd`
-- `yyyy.mm.dd`
+Options
 
-When execute without arguments, display current day of week.
+* `-w` Outputs the name of the day of the week along with the date
+* `-s <separator>` Specifies the date separator
 
-Display day of week in language of locale, set `LANG` environment variable.
-
-
-### Example
+#### Example
 
 ```shell
 $ dow 2023-1-1
 Sun
 
-$ LANG=ja_JP dow 2023/1/2
-月
+$ dow -w 2023-1-2
+2023-1-2(Mon)
 
-$ LANG=zh_CN dow 2023.1.3
-二
+$ dow -w -s / 2023-1-3
+2023/1/3(Tue)
+
+$ LANG=ja_JP dow 2023/1/4
+水
+
+$ LANG=zh_CN dow 2023.1.5
+四
 ```

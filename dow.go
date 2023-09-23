@@ -1,3 +1,5 @@
+// Dow package provide functions to get the name of the day of the week.
+//
 package dow
 
 import (
@@ -7,20 +9,24 @@ import (
 	"github.com/goodsign/monday"
 )
 
+// Get the name of the day of the week for a given date
 func GetName(date time.Time) string {
 	return GetLocaleName(date, "")
 }
 
+// Get the locale name of the day of the week for a given date
 func GetLocaleName(date time.Time, lang string) string {
 	var locale = getLocale(lang)
 	return format(date, locale, false)
 }
 
+// Get the name of the day of the week for a given date with the date
 func GetNameWithDate(date time.Time) string {
 	var locale = getLocale("")
 	return format(date, locale, true)
 }
 
+// Get the locale name of the day of the week for a given date with the date
 func GetLocaleNameWithDate(date time.Time, lang string) string {
 	var locale = getLocale(lang)
 	return format(date, locale, true)

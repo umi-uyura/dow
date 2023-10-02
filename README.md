@@ -7,8 +7,16 @@ Display day of week for specified date.
 Install
 -------
 
+CLI Tool
+
 ```shell
 go install github.com/umi-uyura/dow/cmd/dow@latest
+```
+
+Library
+
+```shell
+go get github.com/umi-uyura/dow
 ```
 
 
@@ -51,6 +59,10 @@ $ LANG=ja_JP dow 2023/1/4
 $ LANG=zh_CN dow 2023.1.5
 四
 ```
+
+### Library
+
+See: [dow package - github.com/umi-uyura/dow - Go Packages](https://pkg.go.dev/github.com/umi-uyura/dow#section-documentation)
 
 
 License
